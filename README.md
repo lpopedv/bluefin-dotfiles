@@ -54,6 +54,7 @@ After pulling changes, `dotup` (zsh function) pulls and re-runs it.
 | Package   | Configures |
 |-----------|------------|
 | `claude`  | Claude Code hooks, theme, English-learning skills (settings: `claude-settings/`) |
+| `flatpak-overrides` | Flatpak permission overrides (`flatpak override --user`, as files) |
 | `git`     | Identity include and editor |
 | `herdr`   | Agent multiplexer |
 | `lazygit` | Git TUI |
@@ -138,6 +139,8 @@ replaces or masks a file from the image, and nothing overrides a setting Bluefin
 - **Traces**: core dumps off; NetworkManager's leases and seen access points live in RAM.
 - **Network identity**: new MAC on Ethernet, DHCP IDs and IPv6 address every boot; hostname never
   sent to DHCP servers.
+- **Flatpak permissions**: user overrides in `flatpak-overrides/`. Telegram gets the GPU but
+  no other device (camera included).
 
 To undo a file, delete it from `/etc` and restart its service; to drop a kernel argument,
 `sudo rpm-ostree kargs --delete=<arg>`. Tailscale is installed but logged out; if you use it,
