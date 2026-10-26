@@ -1,0 +1,9 @@
+# Bluefin's uupd doesn't upgrade distroboxes, and an Arch box left for months
+# breaks on partial upgrades.
+[Unit]
+Description=Upgrade the dev distrobox
+
+[Service]
+Type=oneshot
+ExecStartPre=/usr/bin/nm-online -q
+ExecStart=/usr/bin/distrobox upgrade dev
