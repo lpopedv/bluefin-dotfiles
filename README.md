@@ -14,7 +14,7 @@ Arch/Hyprland repo; everything desktop-specific is rebuilt for GNOME.
 | Language runtimes, LSPs, herdr, Claude Code | `mise/` | Installed inside the box (compiled against Arch), pinned per user and locked in `mise.lock`. Project-specific ones belong in the project's own `mise.toml`. |
 | Claude Code settings | `claude-settings/` | Merged into `~/.claude/settings.json` by `apply.py`, not stowed: Claude Code and its integrations write to that file, and their keys stay out of the repo. |
 | GNOME settings | `gnome/*.dconf` | Replayed with `dconf load`. |
-| System DNS | `system/etc/` | Dropped into `/etc` (writable and persistent on Bluefin) by `bootstrap.sh`. |
+| System config | `system/etc/`, `system/kargs.txt` | Files copied into `/etc` (writable, kept across image updates) and kernel arguments added with `rpm-ostree kargs`, both by `bootstrap.sh`. No custom image needed. |
 | Everything else | stow packages | One directory per tool, mirroring `$HOME`. |
 
 Nothing is layered with `rpm-ostree`.
@@ -44,8 +44,10 @@ then `bootstrap.sh` (everything worth keeping lives in `$HOME`).
 `bootstrap.sh` order: brew bundle, flatpaks, stow (existing files are moved to
 `~/.dotfiles-backup/<timestamp>`, never deleted), Claude Code settings merge, create the `dev`
 box if missing, `mise install --locked` inside it, weekly box upgrade timer, login shell to zsh,
-docker group check, `dconf load`, DNS-over-TLS drop-ins (sudo), Zen as default browser, user
-tmpfiles. After pulling changes, `dotup` (zsh function) pulls and re-runs it.
+docker group check, `dconf load`, Zen as default browser, `/etc` files (sudo, restarting
+the services they belong to), tmpfs mount for NetworkManager's state, firewall zone, kernel
+arguments, Secure Boot check, user tmpfiles.
+After pulling changes, `dotup` (zsh function) pulls and re-runs it.
 
 ## Packages
 
@@ -90,19 +92,41 @@ and to `enabled-extensions`.
 Shell and REPL histories go to `$XDG_RUNTIME_DIR` (`zsh/.zshrc`), and
 `systemd/.config/user-tmpfiles.d/traces.conf` redirects state files (nvim shada/swap, lazygit,
 Claude Code prompt history, herdr logs) into RAM and wipes Nautilus metadata and recent files
-at login. `~/.cache` is **not** tmpfs here (that needs root and an image change), and Zen
+at login. System-wide, NetworkManager's state is in RAM too (see Hardening); the journal and
+`/var/log` stay persistent, as Bluefin sets them. `~/.cache` is **not** tmpfs here (that needs root and an image change), and Zen
 and VS Code keep their own profiles on disk.
 
 ## DNS
 
 `system/etc/` makes systemd-resolved use Cloudflare over TLS (1.1.1.1 / 1.0.0.1, IPv4 and IPv6),
-DNSSEC validated upstream by Cloudflare and LLMNR/mDNS off. A NetworkManager drop-in stops it
+DNSSEC validated upstream by Cloudflare. A NetworkManager drop-in stops it
 pushing the DHCP-advertised DNS. It is opportunistic: on a network that blocks port 853 (hotel or
 airport wi-fi with a login page) queries go to Cloudflare unencrypted, so that network can see
 them; anything that can block 853 can force that downgrade. The name you visit still shows in
 TLS SNI (no ECH). Undo steps are in `bootstrap.sh`.
 
-## Known gaps
+## Hardening
 
-- The Arch repo's other system hardening (nftables, sysctl, Secure Boot, tmpfs `/var/log`)
-  is not ported: on Bluefin that is image-level work (`bootc`, [finpilot](https://github.com/projectbluefin/finpilot)).
+Ported from the Arch repo to Bluefin's own tools, as drop-ins next to the image's files. Nothing
+replaces or masks a file from the image, and nothing overrides a setting Bluefin made on purpose
+(persistent journal, chrony, `/tmp` cleanup, Wi-Fi MAC per network). Everything is in `system/`:
+
+- **Firewall**: firewalld zone `stealth` (default) drops everything unsolicited without
+  replying, except GSConnect (1714-1764), mDNS and the ICMPv6 and DHCPv6 that IPv6 needs.
+  Bluefin's default zone accepts every port above 1024. Docker publishes ports on 127.0.0.1
+  unless a compose file names another address (`docker/daemon.json`); existing containers keep
+  their ports until recreated.
+- **Kernel**: `sysctl.d/99-hardening.conf` (io_uring off, ptrace needs sudo, no ICMP
+  redirects...) and `kargs.txt` (memory zeroed on free, no debugfs or
+  vsyscall). Only what Fedora's kernel doesn't already do. Kernel arguments apply from the next
+  boot.
+- **Secure Boot**: not automatic. Run `ujust enroll-secure-boot-key`, reboot to enroll Bluefin's
+  key (its kernel modules are signed with it), then enable Secure Boot in the firmware. Fedora's
+  kernel then also enforces lockdown (integrity mode).
+- **Traces**: core dumps off; NetworkManager's leases and seen access points live in RAM.
+- **Network identity**: new MAC on Ethernet, DHCP IDs and IPv6 address every boot; hostname never
+  sent to DHCP servers.
+
+To undo a file, delete it from `/etc` and restart its service; to drop a kernel argument,
+`sudo rpm-ostree kargs --delete=<arg>`. Tailscale is installed but logged out; if you use it,
+`tailscale0` lands in the stealth zone too.

@@ -1,0 +1,14 @@
+# DHCP leases and the access points each network has seen (a location history).
+# Saved networks and their passwords are in /etc and unaffected.
+[Unit]
+Description=Volatile /var/lib/NetworkManager (tmpfs)
+
+[Mount]
+What=tmpfs
+Where=/var/lib/NetworkManager
+Type=tmpfs
+# rootcontext: without it SELinux labels the mount tmpfs_t and denies writes.
+Options=mode=0700,nosuid,nodev,noexec,size=16M,rootcontext=system_u:object_r:NetworkManager_var_lib_t:s0
+
+[Install]
+WantedBy=local-fs.target
