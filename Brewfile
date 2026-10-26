@@ -3,5 +3,4 @@
 brew "stow"
 brew "gh"
 brew "eza"
-# The font set in gnome/desktop.dconf; the image only ships the symbols-only Nerd Font.
 cask "font-jetbrains-mono-nerd-font"
