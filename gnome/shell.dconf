@@ -1,0 +1,59 @@
+[org/gnome/shell]
+disable-user-extensions=false
+disabled-extensions=['apps-menu@gnome-shell-extensions.gcampax.github.com', 'dash-to-dock@micxgx.gmail.com', 'window-list@gnome-shell-extensions.gcampax.github.com']
+enabled-extensions=['gradia-integration@alexandervanhee.github.io', 'gsconnect@andyholmes.github.io', 'search-light@icedman.github.com', 'appindicatorsupport@rgcjonas.gmail.com', 'bazaar-integration@kolunmi.github.io', 'caffeine@patapon.info', 'blur-my-shell@aunetx', 'logomenu@aryan_k', 'tactile@lundal.io']
+favorite-apps=['app.zen_browser.zen.desktop', 'org.gnome.Ptyxis.desktop', 'org.gnome.Nautilus.desktop', 'io.github.kolunmi.Bazaar.desktop', 'md.obsidian.Obsidian.desktop', 'com.microsoft.VSCode.desktop']
+
+[org/gnome/shell/extensions/blur-my-shell]
+rounded-blur-found=true
+settings-version=2
+
+[org/gnome/shell/extensions/blur-my-shell/appfolder]
+brightness=0.59999999999999998
+sigma=30
+
+[org/gnome/shell/extensions/blur-my-shell/dash-to-dock]
+blur=true
+brightness=0.59999999999999998
+sigma=30
+static-blur=true
+style-dash-to-dock=0
+
+[org/gnome/shell/extensions/blur-my-shell/panel]
+brightness=0.59999999999999998
+corner-radius=0
+sigma=30
+
+[org/gnome/shell/extensions/blur-my-shell/popup]
+blur=false
+
+[org/gnome/shell/extensions/blur-my-shell/window-list]
+brightness=0.59999999999999998
+sigma=30
+
+[org/gnome/shell/extensions/caffeine]
+cli-toggle=true
+indicator-position-max=3
+
+[org/gnome/shell/extensions/dash-to-dock]
+background-opacity=0.80000000000000004
+click-action='focus-minimize-or-previews'
+custom-theme-shrink=true
+dash-max-icon-size=48
+dock-position='BOTTOM'
+height-fraction=0.90000000000000002
+hot-keys=false
+scroll-action='cycle-windows'
+show-trash=false
+
+[org/gnome/shell/extensions/search-light]
+background-color=(0.0, 0.0, 0.0, 0.80000000000000004)
+border-color=(0.23000000000000001, 0.23000000000000001, 0.23000000000000001, 1.0)
+border-radius=1.6499999999999999
+border-thickness=1
+scale-height=0.14999999999999999
+scale-width=0.10000000000000001
+shortcut-search=['<Super>space']
+
+[org/gnome/shell/extensions/tactile]
+gap-size=6

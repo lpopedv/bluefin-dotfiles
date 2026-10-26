@@ -1,0 +1,41 @@
+[org/gnome/Ptyxis]
+cursor-shape='underline'
+font-name='JetBrainsMono Nerd Font 13'
+restore-window-size=true
+use-system-font=false
+
+[org/gnome/desktop/input-sources]
+current=uint32 0
+sources=[('xkb', 'br')]
+
+[org/gnome/desktop/interface]
+accent-color='blue'
+color-scheme='prefer-dark'
+enable-hot-corners=true
+
+[org/gnome/desktop/peripherals/touchpad]
+two-finger-scrolling-enabled=true
+
+[org/gnome/desktop/privacy]
+old-files-age=uint32 1
+remember-recent-files=false
+remove-old-temp-files=true
+remove-old-trash-files=true
+report-technical-problems=false
+
+[org/gnome/desktop/session]
+idle-delay=uint32 900
+
+[org/gnome/desktop/wm/preferences]
+button-layout='close,minimize,maximize:'
+
+[org/gnome/settings-daemon/plugins/color]
+night-light-enabled=false
+night-light-schedule-automatic=false
+
+[org/gnome/settings-daemon/plugins/power]
+sleep-inactive-ac-timeout=2700
+
+[org/gtk/gtk4/settings/file-chooser]
+show-hidden=false
+sort-directories-first=true

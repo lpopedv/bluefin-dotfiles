@@ -1,0 +1,3 @@
+# Extensions the Bluefin image doesn't ship. apply.sh installs them; also add
+# each one to enabled-extensions in shell.dconf.
+tactile@lundal.io
