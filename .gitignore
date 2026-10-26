@@ -1,0 +1,13 @@
+# Kubeconfigs carry cluster credentials; never let one be committed.
+.kube/
+
+# herdr's own runtime state: regenerated locally on every run, not source.
+herdr/.config/herdr/*.log
+herdr/.config/herdr/session.json
+herdr/.config/herdr/session-snapshots/
+herdr/.config/herdr/.plugins.lock
+herdr/.config/herdr/*.sock
+herdr/.config/herdr/scripts/*.log
+
+# Written by `systemctl --user enable`: absolute, user-specific symlinks.
+systemd/.config/systemd/user/*.wants/
