@@ -45,7 +45,7 @@ then `bootstrap.sh` (everything worth keeping lives in `$HOME`).
 `~/.dotfiles-backup/<timestamp>`, never deleted), Claude Code settings merge, create the `dev`
 box if missing, `mise install --locked` inside it, weekly box upgrade timer, login shell to zsh,
 docker group check, `dconf load`, Zen as default browser, `/etc` files (sudo, restarting
-the services they belong to), tmpfs mount for NetworkManager's state, firewall zone, kernel
+the services they belong to), tmpfs mount for NetworkManager's state, firewall zone, tailscaled off, kernel
 arguments, Secure Boot check, user tmpfiles.
 After pulling changes, `dotup` (zsh function) pulls and re-runs it.
 
@@ -139,9 +139,11 @@ replaces or masks a file from the image, and nothing overrides a setting Bluefin
 - **Traces**: core dumps off; NetworkManager's leases and seen access points live in RAM.
 - **Network identity**: new MAC on Ethernet, DHCP IDs and IPv6 address every boot; hostname never
   sent to DHCP servers.
+- **Unused services**: `tailscaled` ships with the image and is disabled (`bootstrap.sh`), so
+  nothing listens on its port. `sudo systemctl enable --now tailscaled` brings it back.
 - **Flatpak permissions**: user overrides in `flatpak-overrides/`. Telegram gets the GPU but
   no other device (camera included).
 
 To undo a file, delete it from `/etc` and restart its service; to drop a kernel argument,
-`sudo rpm-ostree kargs --delete=<arg>`. Tailscale is installed but logged out; if you use it,
-`tailscale0` lands in the stealth zone too.
+`sudo rpm-ostree kargs --delete=<arg>`. If you re-enable Tailscale, `tailscale0` lands in the
+stealth zone too.

@@ -231,6 +231,14 @@ else
     run sudo firewall-cmd --quiet --set-default-zone=stealth
 fi
 
+log "Unused services"
+# Ships with the image and starts by default; disabling it is kept in /etc.
+if systemctl is-enabled --quiet tailscaled 2>/dev/null; then
+    run sudo systemctl disable --now tailscaled
+else
+    ok "tailscaled disabled"
+fi
+
 log "Kernel arguments"
 # Applied to a new deployment: they take effect at the next boot.
 current=" $(rpm-ostree kargs) "
