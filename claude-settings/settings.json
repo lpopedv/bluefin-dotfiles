@@ -1,0 +1,22 @@
+{
+  "model": "opus",
+  "effortLevel": "high",
+  "theme": "custom:mono",
+  "cleanupPeriodDays": 3,
+  "env": {
+    "DISABLE_AUTOUPDATER": "1"
+  },
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"$HOME/.claude/hooks/en-auto.py\"",
+            "timeout": 5
+          }
+        ]
+      }
+    ]
+  }
+}
