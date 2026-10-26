@@ -1,0 +1,76 @@
+onboarding = false
+
+[theme]
+name = "terminal"
+auto_switch = false
+
+[theme.custom]
+active_row_bg = "#333333"
+selection_bg  = "#262626"
+accent        = "#7fa6d4"
+
+[keys]
+prefix = "ctrl+space"
+
+split_vertical   = ["prefix+v"]
+split_horizontal = ["prefix+minus", "prefix+s"]
+
+focus_pane_left  = ["prefix+h"]
+focus_pane_down  = ["prefix+j"]
+focus_pane_up    = ["prefix+k"]
+focus_pane_right = ["prefix+l"]
+
+swap_pane_left  = ["prefix+shift+h"]
+swap_pane_down  = ["prefix+shift+j"]
+swap_pane_up    = ["prefix+shift+k"]
+swap_pane_right = ["prefix+shift+l"]
+
+zoom        = ["prefix+f"]
+resize_mode = ["prefix+r"]
+copy_mode   = ["prefix+space"]
+close_pane  = ["prefix+x"]
+
+next_tab     = ["prefix+]"]
+previous_tab = ["prefix+["]
+new_tab      = ["prefix+n"]
+
+navigate_workspace_up   = ["k"]
+navigate_workspace_down = ["j"]
+
+[[keys.command]]
+key = "prefix+c"
+type = "shell"
+command = "~/.config/herdr/scripts/spawn-pane.sh 'zsh -lc claude'"
+description = "claude (novo pane)"
+
+[[keys.command]]
+key = "prefix+a"
+type = "popup"
+command = "~/.config/herdr/scripts/agent-picker.sh"
+width = "60%"
+height = "40%"
+description = "agents"
+
+[[keys.command]]
+key = "prefix+g"
+type = "shell"
+command = "~/.config/herdr/scripts/spawn-pane.sh lazygit"
+description = "lazygit (novo pane)"
+
+[[keys.command]]
+key = "prefix+o"
+type = "shell"
+command = "~/.config/herdr/scripts/project-layout.sh"
+description = "project layout"
+
+[[keys.command]]
+key = "prefix+shift+o"
+type = "shell"
+command = "~/.config/herdr/scripts/project-layout.sh --tools"
+description = "project layout + tools"
+
+[ui.toast]
+delivery = "system"
+
+[ui.sound]
+enabled = true
