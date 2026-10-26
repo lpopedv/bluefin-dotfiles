@@ -155,30 +155,102 @@ else
     run xdg-settings set default-web-browser app.zen_browser.zen.desktop
 fi
 
-log "DNS"
-# To undo: remove from /etc the files under system/etc, then restart
-# systemd-resolved and NetworkManager.
-changed=0
+log "System config"
+# /etc is writable and kept across image updates. To undo a file: delete it from
+# /etc and restart the service it belongs to (listed below).
+# Some /etc directories (firewalld) are root-only, so comparing them needs sudo.
+# Returns 0 if identical, 1 if different or missing, 2 if it can't tell (dry run).
+same() {
+    local dir="${2%/*}"
+    until [[ -e "$dir" ]]; do dir="${dir%/*}"; done
+    if [[ -r "$dir" && -x "$dir" ]]; then cmp -s "$1" "$2" || return 1
+    elif (( DRY )); then return 2
+    else sudo cmp -s "$1" "$2" || return 1
+    fi
+}
+changed=()
 while IFS= read -r -d '' f; do
-    dest="/etc/${f#"$DOTFILES"/system/etc/}"
-    if cmp -s "$f" "$dest"; then
-        ok "${dest#/etc/}"
+    rel="${f#"$DOTFILES"/system/etc/}"
+    rc=0; same "$f" "/etc/$rel" || rc=$?
+    if (( rc == 0 )); then
+        ok "$rel"
+    elif (( rc == 2 )); then
+        plan "compare $rel (root-only, needs sudo)"
     else
-        run sudo install -Dm644 "$f" "$dest"
-        changed=1
+        # -Z: SELinux label from policy, not inherited from the source file.
+        run sudo install -DZm644 "$f" "/etc/$rel"
+        changed+=("$rel")
     fi
-done < <(find "$DOTFILES/system/etc" -type f -print0)
-if (( changed )); then
-    run sudo systemctl restart systemd-resolved
-    run sudo systemctl reload NetworkManager
-    if (( ! DRY )); then
-        sleep 2
-        if resolvectl query cloudflare.com >/dev/null 2>&1; then
-            ok "resolving through DNS-over-TLS"
-        else
-            warn "DNS lookup failed: see the undo note in bootstrap.sh"
-        fi
+done < <(find "$DOTFILES/system/etc" -type f -print0 | sort -z)
+touched() {
+    local rel
+    for rel in "${changed[@]}"; do [[ "$rel" == "$1"* ]] && return 0; done
+    return 1
+}
+touched systemd/resolved.conf.d && run sudo systemctl restart systemd-resolved
+touched NetworkManager/ && run sudo systemctl reload NetworkManager
+touched sysctl.d/ && run sudo systemctl restart systemd-sysctl
+touched firewalld/ && run sudo firewall-cmd --quiet --reload
+# Checked against the daemon's start time, not `touched`, so a restart that had to
+# wait is still reported on later runs. A restart stops running containers.
+started="$(systemctl show docker -P ActiveEnterTimestamp)"
+if touched docker/ || { [[ -f /etc/docker/daemon.json && -n "$started" ]] &&
+        (( $(stat -c %Y /etc/docker/daemon.json) > $(date -d "$started" +%s) )); }; then
+    if [[ -z "$(docker ps -q 2>/dev/null)" ]]; then
+        run sudo systemctl restart docker
+    else
+        warn "containers running: stop them, then 'sudo systemctl restart docker' to apply daemon.json"
     fi
+fi
+touched systemd/system/ && run sudo systemctl daemon-reload
+if touched systemd/resolved.conf.d && (( ! DRY )); then
+    sleep 2
+    if resolvectl query cloudflare.com >/dev/null 2>&1; then
+        ok "resolving through DNS-over-TLS"
+    else
+        warn "DNS lookup failed"
+    fi
+fi
+
+log "Volatile /var"
+# Mounted from the next boot, not over the state the running services hold open.
+for f in "$DOTFILES"/system/etc/systemd/system/*.mount; do
+    unit="${f##*/}"
+    if systemctl is-enabled --quiet "$unit" 2>/dev/null; then
+        ok "$unit"
+    else
+        run sudo systemctl enable "$unit"
+        warn "$unit takes effect at the next boot"
+    fi
+done
+
+log "Firewall"
+if [[ "$(firewall-cmd --get-default-zone 2>/dev/null)" == stealth ]]; then
+    ok "default zone: stealth"
+else
+    run sudo firewall-cmd --quiet --set-default-zone=stealth
+fi
+
+log "Kernel arguments"
+# Applied to a new deployment: they take effect at the next boot.
+current=" $(rpm-ostree kargs) "
+missing=()
+while IFS= read -r arg; do
+    [[ "$current" == *" $arg "* ]] || missing+=("--append-if-missing=$arg")
+done < <(read_list "$DOTFILES/system/kargs.txt")
+if (( ${#missing[@]} )); then
+    run sudo rpm-ostree kargs "${missing[@]}"
+    warn "reboot to boot with the new kernel arguments"
+else
+    ok "all present"
+fi
+
+log "Secure Boot"
+# With Secure Boot on, Fedora's kernel also enforces lockdown (integrity mode).
+if mokutil --sb-state 2>/dev/null | grep -q enabled; then
+    ok "enabled"
+else
+    warn "disabled: run 'ujust enroll-secure-boot-key', reboot to enroll the key, then enable Secure Boot in the firmware"
 fi
 
 log "Trace retention"
