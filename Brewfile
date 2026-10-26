@@ -3,3 +3,4 @@
 brew "stow"
 brew "gh"
 brew "eza"
+cask "font-jetbrains-mono-nerd-font"
