@@ -130,7 +130,7 @@ replaces or masks a file from the image, and nothing overrides a setting Bluefin
   unless a compose file names another address (`docker/daemon.json`); existing containers keep
   their ports until recreated.
 - **Kernel**: `sysctl.d/99-hardening.conf` (io_uring off, ptrace needs sudo, no ICMP
-  redirects...) and `kargs.txt` (memory zeroed on free, no debugfs or
+  redirects...) and `kargs.txt` (memory zeroed on free, no
   vsyscall). Only what Fedora's kernel doesn't already do. Kernel arguments apply from the next
   boot.
 - **Secure Boot**: not automatic. Run `ujust enroll-secure-boot-key`, reboot to enroll Bluefin's
