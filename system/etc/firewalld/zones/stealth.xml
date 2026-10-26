@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Default zone, set by bootstrap.sh. Replaces Bluefin's FedoraWorkstation,
+     which accepts every port above 1024. Unsolicited packets are dropped
+     silently (no reject, no ping reply). -->
+<zone target="DROP">
+  <short>Stealth</short>
+  <description>Drops everything unsolicited except GSConnect, mDNS and what IPv6 needs to work.</description>
+  <service name="dhcpv6-client"/>
+  <service name="kdeconnect"/>
+  <!-- Replies to avahi's multicast queries (printers, .local names). -->
+  <service name="mdns"/>
+  <!-- With inversion, the ICMP types listed are the only ones accepted. -->
+  <icmp-block-inversion/>
+  <icmp-block name="neighbour-advertisement"/>
+  <icmp-block name="neighbour-solicitation"/>
+  <icmp-block name="router-advertisement"/>
+  <icmp-block name="packet-too-big"/>
+  <icmp-block name="time-exceeded"/>
+  <icmp-block name="destination-unreachable"/>
+  <icmp-block name="parameter-problem"/>
+</zone>
