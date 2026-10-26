@@ -1,0 +1,31 @@
+# Colors match nvim/colors/mono.lua.
+gui:
+  theme:
+    activeBorderColor:
+      - "#ffffff"
+      - bold
+    inactiveBorderColor:
+      - "#333333"
+    searchingActiveBorderColor:
+      - "#d8c288"
+      - bold
+    optionsTextColor:
+      - "#7fa6d4"
+    selectedLineBgColor:
+      - "#262626"
+    inactiveViewSelectedLineBgColor:
+      - "#161616"
+    cherryPickedCommitFgColor:
+      - "#83d4c5"
+    cherryPickedCommitBgColor:
+      - "#333333"
+    markedBaseCommitFgColor:
+      - "#ce8ad2"
+    markedBaseCommitBgColor:
+      - "#333333"
+    unstagedChangesColor:
+      - "#c56b51"
+    defaultFgColor:
+      - "#b3b3b3"
+    authorColors:
+      "*": "#c4a560"
