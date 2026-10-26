@@ -10,7 +10,7 @@ Arch/Hyprland repo; everything desktop-specific is rebuilt for GNOME.
 |------|-------|-----|
 | Dev environment | `distrobox.ini` | An Arch box named `dev` that shares `$HOME` with the host. Editor, git UI and cloud CLIs are `pacman` packages in it. Upgraded weekly by a user timer. |
 | Host-only tools | `Brewfile` (Homebrew) | Just `stow`, `gh` and `eza`. |
-| GUI apps | `flatpak/apps.txt` | Bluefin's preferred route. The file lists only what the image doesn't ship (Zen, Obsidian, Telegram). |
+| GUI apps | `flatpak/apps.txt` | Bluefin's preferred route. The file lists only what the image doesn't ship (Zen, Telegram, Gear Lever). |
 | Language runtimes, LSPs, herdr, Claude Code | `mise/` | Installed inside the box (compiled against Arch), pinned per user and locked in `mise.lock`. Project-specific ones belong in the project's own `mise.toml`. |
 | Claude Code settings | `claude-settings/` | Merged into `~/.claude/settings.json` by `apply.py`, not stowed: Claude Code and its integrations write to that file, and their keys stay out of the repo. |
 | GNOME settings | `gnome/*.dconf` | Replayed with `dconf load`. |
@@ -45,7 +45,7 @@ then `bootstrap.sh` (everything worth keeping lives in `$HOME`).
 `~/.dotfiles-backup/<timestamp>`, never deleted), Claude Code settings merge, create the `dev`
 box if missing, `mise install --locked` inside it, weekly box upgrade timer, login shell to zsh,
 docker group check, `dconf load`, Zen as default browser, `/etc` files (sudo, restarting
-the services they belong to), tmpfs mount for NetworkManager's state, firewall zone, kernel
+the services they belong to), tmpfs mount for NetworkManager's state, firewall zone, tailscaled off, kernel
 arguments, Secure Boot check, user tmpfiles.
 After pulling changes, `dotup` (zsh function) pulls and re-runs it.
 
@@ -54,6 +54,7 @@ After pulling changes, `dotup` (zsh function) pulls and re-runs it.
 | Package   | Configures |
 |-----------|------------|
 | `claude`  | Claude Code hooks, theme, English-learning skills (settings: `claude-settings/`) |
+| `flatpak-overrides` | Flatpak permission overrides (`flatpak override --user`, as files) |
 | `git`     | Identity include and editor |
 | `herdr`   | Agent multiplexer |
 | `lazygit` | Git TUI |
@@ -100,10 +101,22 @@ and VS Code keep their own profiles on disk.
 
 `system/etc/` makes systemd-resolved use Cloudflare over TLS (1.1.1.1 / 1.0.0.1, IPv4 and IPv6),
 DNSSEC validated upstream by Cloudflare. A NetworkManager drop-in stops it
-pushing the DHCP-advertised DNS. It is opportunistic: on a network that blocks port 853 (hotel or
-airport wi-fi with a login page) queries go to Cloudflare unencrypted, so that network can see
-them; anything that can block 853 can force that downgrade. The name you visit still shows in
-TLS SNI (no ECH). Undo steps are in `bootstrap.sh`.
+pushing the DHCP-advertised DNS. It is strict: nothing falls back to plain DNS, so a network
+can't downgrade it, and one that blocks port 853 (hotel or airport wi-fi with a login page)
+resolves nothing. To reach a login page, send that link's queries to the network's own DNS
+until the next `resolvectl revert`:
+
+```sh
+iface=$(ip route show default | awk '{print $5; exit}')
+sudo resolvectl dns "$iface" "$(ip route show default | awk '{print $3; exit}')"
+sudo resolvectl dnsovertls "$iface" no
+sudo resolvectl domain "$iface" '~.'
+# logged in:
+sudo resolvectl revert "$iface"
+```
+
+LLMNR is off (it asks the LAN for unknown names and trusts whoever answers); avahi still
+resolves `.local`. The name you visit still shows in TLS SNI (no ECH).
 
 ## Hardening
 
@@ -126,7 +139,11 @@ replaces or masks a file from the image, and nothing overrides a setting Bluefin
 - **Traces**: core dumps off; NetworkManager's leases and seen access points live in RAM.
 - **Network identity**: new MAC on Ethernet, DHCP IDs and IPv6 address every boot; hostname never
   sent to DHCP servers.
+- **Unused services**: `tailscaled` ships with the image and is disabled (`bootstrap.sh`), so
+  nothing listens on its port. `sudo systemctl enable --now tailscaled` brings it back.
+- **Flatpak permissions**: user overrides in `flatpak-overrides/`. Telegram gets the GPU but
+  no other device (camera included).
 
 To undo a file, delete it from `/etc` and restart its service; to drop a kernel argument,
-`sudo rpm-ostree kargs --delete=<arg>`. Tailscale is installed but logged out; if you use it,
-`tailscale0` lands in the stealth zone too.
+`sudo rpm-ostree kargs --delete=<arg>`. If you re-enable Tailscale, `tailscale0` lands in the
+stealth zone too.

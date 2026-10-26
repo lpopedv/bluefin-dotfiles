@@ -16,7 +16,7 @@ for arg in "$@"; do
     esac
 done
 
-STOW_PACKAGES=(claude git herdr lazygit mise nvim ptyxis systemd zsh)
+STOW_PACKAGES=(claude flatpak-overrides git herdr lazygit mise nvim ptyxis systemd zsh)
 
 log()  { printf '\n\033[1m==> %s\033[0m\n' "$*"; }
 ok()   { printf '    \033[32mok\033[0m %s\n' "$*"; }
@@ -229,6 +229,14 @@ if [[ "$(firewall-cmd --get-default-zone 2>/dev/null)" == stealth ]]; then
     ok "default zone: stealth"
 else
     run sudo firewall-cmd --quiet --set-default-zone=stealth
+fi
+
+log "Unused services"
+# Ships with the image and starts by default; disabling it is kept in /etc.
+if systemctl is-enabled --quiet tailscaled 2>/dev/null; then
+    run sudo systemctl disable --now tailscaled
+else
+    ok "tailscaled disabled"
 fi
 
 log "Kernel arguments"

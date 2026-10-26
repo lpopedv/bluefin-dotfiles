@@ -1,5 +1,4 @@
 # Only apps the Bluefin image doesn't ship.
 app.zen_browser.zen
-md.obsidian.Obsidian
 org.telegram.desktop
 it.mijorus.gearlever

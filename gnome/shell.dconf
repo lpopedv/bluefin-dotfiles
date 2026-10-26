@@ -2,7 +2,7 @@
 disable-user-extensions=false
 disabled-extensions=['apps-menu@gnome-shell-extensions.gcampax.github.com', 'dash-to-dock@micxgx.gmail.com', 'window-list@gnome-shell-extensions.gcampax.github.com']
 enabled-extensions=['gradia-integration@alexandervanhee.github.io', 'gsconnect@andyholmes.github.io', 'search-light@icedman.github.com', 'appindicatorsupport@rgcjonas.gmail.com', 'bazaar-integration@kolunmi.github.io', 'caffeine@patapon.info', 'blur-my-shell@aunetx', 'logomenu@aryan_k', 'tactile@lundal.io']
-favorite-apps=['app.zen_browser.zen.desktop', 'org.gnome.Ptyxis.desktop', 'org.gnome.Nautilus.desktop', 'io.github.kolunmi.Bazaar.desktop', 'md.obsidian.Obsidian.desktop', 'com.microsoft.VSCode.desktop']
+favorite-apps=['app.zen_browser.zen.desktop', 'org.gnome.Ptyxis.desktop', 'org.gnome.Nautilus.desktop', 'io.github.kolunmi.Bazaar.desktop', 'com.microsoft.VSCode.desktop']
 
 [org/gnome/shell/extensions/blur-my-shell]
 rounded-blur-found=true
