@@ -1,0 +1,6 @@
+# Name, email and signing key, kept out of the repo. Skipped if missing.
+[include]
+	path = ~/.config/git/identity
+
+[core]
+	editor = nvim
