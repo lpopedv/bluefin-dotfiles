@@ -10,7 +10,7 @@ Arch/Hyprland repo; everything desktop-specific is rebuilt for GNOME.
 |------|-------|-----|
 | Dev environment | `distrobox.ini` | An Arch box named `dev` that shares `$HOME` with the host. Editor, git UI and cloud CLIs are `pacman` packages in it. Upgraded weekly by a user timer. |
 | Host-only tools | `Brewfile` (Homebrew) | Just `stow`, `gh` and `eza`. |
-| GUI apps | `flatpak/apps.txt` | Bluefin's preferred route. The file lists only what the image doesn't ship (Zen, Obsidian, Telegram). |
+| GUI apps | `flatpak/apps.txt` | Bluefin's preferred route. The file lists only what the image doesn't ship (Zen, Telegram, Gear Lever). |
 | Language runtimes, LSPs, herdr, Claude Code | `mise/` | Installed inside the box (compiled against Arch), pinned per user and locked in `mise.lock`. Project-specific ones belong in the project's own `mise.toml`. |
 | Claude Code settings | `claude-settings/` | Merged into `~/.claude/settings.json` by `apply.py`, not stowed: Claude Code and its integrations write to that file, and their keys stay out of the repo. |
 | GNOME settings | `gnome/*.dconf` | Replayed with `dconf load`. |
