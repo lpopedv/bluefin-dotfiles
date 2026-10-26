@@ -1,0 +1,11 @@
+[tools]
+node = "24.21.0"
+bun = "1.4.2"
+herdr = "0.9.5"
+claude = "2.1.310"
+lua-language-server = "latest"
+elixir-ls = "latest"
+tree-sitter = "latest"
+"npm:typescript" = "7.0.2"
+biome = "latest"
+"github:artempyanykh/marksman" = "latest"
