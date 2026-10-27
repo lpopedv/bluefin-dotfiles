@@ -11,16 +11,16 @@ switch-to-workspace-4=['<Super>4']
 toggle-maximized=['<Super>f']
 
 [org/gnome/settings-daemon/plugins/media-keys]
-custom-keybindings=['/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/', '/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1/', '/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom2/', '/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom3/', '/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom5/', '/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom6/']
+custom-keybindings=['/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/', '/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1/', '/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom2/', '/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom3/', '/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom5/', '/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom6/', '/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom7/', '/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom8/']
 
 [org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0]
 binding='<Control><Alt>t'
-command='xdg-terminal-exec'
+command='ptyxis --new-window'
 name='Terminal'
 
 [org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1]
 binding='<Control><Alt>Return'
-command='xdg-terminal-exec'
+command='ptyxis --new-window'
 name='Terminal Alt'
 
 [org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom2]
@@ -42,6 +42,16 @@ name='Open up the emoji picker'
 binding='<Super>period'
 command='flatpak run it.mijorus.smile'
 name='Open up the emoji picker (Alt)'
+
+[org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom7]
+binding='<Super>Return'
+command='ptyxis --new-window'
+name='Terminal (Super)'
+
+[org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom8]
+binding='<Super>b'
+command='flatpak run app.zen_browser.zen'
+name='Zen Browser'
 
 [org/gnome/shell/keybindings]
 switch-to-application-1=@as []

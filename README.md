@@ -72,7 +72,7 @@ Stow from the repo root: `stow --restow <pkg>` / `stow -D <pkg>`. `.stowrc` sets
 `gnome/` holds three dconf files and two scripts:
 
 - `keybindings.dconf`: window and workspace shortcuts (`Super+q` close, `Super+f` maximize,
-  `Super+1..4` workspaces, `Shift+Super+1..4` move window, app-switch shortcuts cleared) and
+  `Super+Enter` terminal, `Super+b` Zen, `Super+1..4` workspaces, `Shift+Super+1..4` move window, app-switch shortcuts cleared) and
   the custom launchers. `custom0`-`custom6` are Bluefin's own defaults, kept so the file is
   self-contained; add yours as new slots.
 - `desktop.dconf`: dark mode, button layout, `br` keyboard, touchpad, privacy, power, Ptyxis.
